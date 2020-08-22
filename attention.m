@@ -172,7 +172,7 @@ if stims(choice) == rotated
     trialerror(0); % correct
     
     amnt = 6 - 5*rt/(choice_interval+saccade_interval);
-    goodmonkey(reward_interval, 'triggerval',3, 'eventmarker',40);
+    goodmonkey(reward_interval, 'triggerval',amnt, 'eventmarker',40);
     eventmarker(41);
     
     toggleobject(all_obj, 'status','off', 'eventmarker',22);

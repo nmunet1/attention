@@ -1,7 +1,7 @@
 Condition	Info	Frequency	Block	Timing File	TaskObject#1	TaskObject#2	TaskObject#3
-1	'trial',2,'target',1,'nontarget',1,'cue_on',1	6	1	attention	fix(0,0)	gen(target.m, 10, 10)	gen(nontarget.m, 10, -10)
-2	'trial',2,'target',1,'nontarget',1,'cue_on',1	6	1	attention	fix(0,0)	gen(target.m, 10, -10)	gen(nontarget.m, 10, 10)
-3	'trial',1,'target',1,'nontarget',0,'cue_on',1	1	1	attention	fix(0,0)	gen(target.m, 10, 10)	crc(2, [0,0,1], 1, 10, -10)
-4	'trial',1,'target',1,'nontarget',0,'cue_on',1	1	1	attention	fix(0,0)	gen(target.m, 10, -10)	crc(2, [0,0,1], 1, 10, 10)
-5	'trial',1,'target',0,'nontarget',1,'cue_on',1	1	1	attention	fix(0,0)	crc(2, [0,0,1], 1, 10, 10)	gen(nontarget.m, 10, -10)
-6	'trial',1,'target',0,'nontarget',1,'cue_on',1	1	1	attention	fix(0,0)	crc(2, [0,0,1], 1, 10, -10)	gen(nontarget.m, 10, 10)
+1	'trial',2,'target',1,'nontarget',1,'cue_on',1	8	1	attention	fix(0,0)	gen(target.m, 10, 10)	gen(nontarget.m, 10, -10)
+2	'trial',2,'target',1,'nontarget',1,'cue_on',1	8	1	attention	fix(0,0)	gen(target.m, 10, -10)	gen(nontarget.m, 10, 10)
+3	'trial',1,'target',1,'nontarget',0,'cue_on',1	1	1	attention	fix(0,0)	gen(target.m, 10, 10)	crc(2, [0 0 1], 1, 10, -10)
+4	'trial',1,'target',1,'nontarget',0,'cue_on',1	1	1	attention	fix(0,0)	gen(target.m, 10, -10)	crc(2, [0 0 1], 1, 10, 10)
+5	'trial',1,'target',0,'nontarget',1,'cue_on',1	1	1	attention	fix(0,0)	crc(2, [0 0 1], 1, 10, 10)	gen(nontarget.m, 10, -10)
+6	'trial',1,'target',0,'nontarget',1,'cue_on',1	1	1	attention	fix(0,0)	crc(2, [0 0 1], 1, 10, -10)	gen(nontarget.m, 10, 10)
