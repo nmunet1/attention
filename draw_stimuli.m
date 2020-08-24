@@ -1,18 +1,13 @@
-lum = 0;
-ppd = 35;
+lum = 0; % background luminance (0=black, 1=white)
+ppd = 35; % pixels per degree
 
-gb = circgabor(1, 0, 0.5, 0.5, ppd, [1 0 0]);
-img = gb(:,:,2:4).*gb(:,:,1) + lum*ones(size(gb,[1 2])).*(1-gb(:,:,1));
-figure; imshow(img);
+colors = [1 1 1; 0 1 0; 1 0 0];
+angles = [0 15];
 
-gb = circgabor(1, 15, 0.5, 0.5, ppd, [1 0 0]);
-img = gb(:,:,2:4).*gb(:,:,1) + lum*ones(size(gb,[1 2])).*(1-gb(:,:,1));
-figure; imshow(img);
-
-gb = circgabor(1, 0, 0.5, 0.5, ppd, [0 1 0]);
-img = gb(:,:,2:4).*gb(:,:,1) + lum*ones(size(gb,[1 2])).*(1-gb(:,:,1));
-figure; imshow(img);
-
-gb = circgabor(1, 15, 0.5, 0.5, ppd, [0 1 0]);
-img = gb(:,:,2:4).*gb(:,:,1) + lum*ones(size(gb,[1 2])).*(1-gb(:,:,1));
-figure; imshow(img);
+for c = colors'
+    for theta = angles
+        gb = circgabor(2, theta, 0.85, 1, ppd, c);
+        img = gb(:,:,2:4).*gb(:,:,1) + lum*ones(size(gb,[1 2])).*(1-gb(:,:,1));
+        figure; imshow(img);
+    end
+end

@@ -34,7 +34,7 @@ choice_radius = 2;
 
 % set default stimulus info
 contrast = 1; % stimulus contrast
-frequency = 2; % stimulus frequency
+frequency = 0.85; % stimulus frequency
 rotation_size = 15; % deg
 target_bias = 0.75; % probability of rotation at target
 
