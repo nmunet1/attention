@@ -14,44 +14,26 @@ bhv_code(10,'fix cue on', 11,'fix cue off', 12,'fix start', ...
 
 % define task objects
 fix_point = 1;
-target = 2;
-nontarget = 3;
+distractor = 2;
+target = 3;
+all_nogo = [fix_point distractor];
+all_go = [fix_point target];
 
 % define time intervals (ms)
 fix_wait = 7500;
 fix_hold = 650;
-delay_min = 500;
-delay_max = 800;
-choice_interval = 750;
-saccade_interval = 500;
-choice_hold = 500;
+delay_min = 250; % goal: 500
+delay_max = 350; % goal: 800
+choice_interval = 2000; % goal: 750
+saccade_interval = 750; % goal: 500 (or less if possible)
+choice_hold = 500; % goal: 500
 reward_interval = 1000;
-timeout = 500;
+timeout = 50;
 
 % define fixation windows (deg)
 fix_radius = 2;
-choice_radius = 2;
 
-% set default stimulus info
-contrast = 1; % stimulus contrast
-frequency = 0.85; % stimulus frequency
-rotation_size = 15; % deg
-target_bias = 0.75; % probability of rotation at target
-
-editable('fix_radius', 'choice_radius', 'contrast', 'frequency', ...
-    'rotation_size', 'target_bias');
-
-% get trial info
-info = TrialRecord.CurrentConditionInfo;
-trialtype = info.trial; % 1 = forced, 2 = free
-target_on = info.target;
-nontarget_on = info.nontarget;
-
-% define which stim are presented
-stims = [];
-if target_on, stims = target; end
-if nontarget_on, stims = [stims nontarget]; end
-all_obj = [fix_point stims];
+editable('fix_radius', 'fix_hold', 'delay_min', 'delay_max', 'timeout');
 
 % ----- TASK SEQUENCE -----
 
@@ -84,11 +66,11 @@ end
 
 % STIM PRESENTATION EPOCH
 delay_to_change = rand*(delay_max-delay_min) + delay_min;
-toggleobject(stims, 'eventmarker',20);
+toggleobject(distractor, 'eventmarker',20);
 
-ontarget = eyejoytrack('holdfix', fix_point, fix_radius, delay_to_change);
+ontarget = eyejoytrack('holdfix', fix_point, fix_radius, delay_to_change-stim_flash);
 if ~ontarget % central fixation not maintained during stim presentation
-    toggleobject(all_obj, 'status','off', 'eventmarker',22);
+    toggleobject(all_nogo, 'status','off', 'eventmarker',22);
     trialerror(5); % early response
     
     set_bgcolor([0.75 0.75 0.75]); % grey error screen
@@ -99,17 +81,8 @@ end
 
 
 % STIM CHANGE
-if target_on && (~nontarget_on || rand < target_bias)
-    rotated = target;
-else
-    rotated = nontarget;
-end
-
-if rand < 0.5
-    rotate_object(rotated, rotation_size);
-else
-    rotate_object(rotated, -rotation_size);
-end
+toggleobject(distractor, 'status','off')
+toggleobject(target, 'status','on')
 eventmarker(30);
 response_start = trialtime;
 
@@ -119,7 +92,7 @@ response_start = trialtime;
 change_time = trialtime;
 breakfix = ~eyejoytrack('holdfix', fix_point, fix_radius, choice_interval);
 if ~breakfix
-    toggleobject(all_obj, 'status','off', 'eventmarker',22);
+    toggleobject(all_go, 'status','off', 'eventmarker',22);
     trialerror(1); % no response (i.e. miss)
     
     set_bgcolor([1 0 0]); % red error screen
@@ -135,13 +108,13 @@ while trialtime < waitstart + saccade_interval
     adjust = trialtime - waitstart;
     
     % saccade to choose within time limit
-    choice = eyejoytrack('acquirefix', stims, fix_radius, saccade_interval-adjust);
+    choice = eyejoytrack('acquirefix', target, fix_radius, saccade_interval-adjust);
     eventmarker(12);
     rt = trialtime - response_start;
 
     % hold fixation on choice to confirm selection
     if choice > 0
-        ontarget = eyejoytrack('holdfix', stims(choice), fix_radius, choice_hold);
+        ontarget = eyejoytrack('holdfix', target, fix_radius, choice_hold);
     else
         ontarget = 0;
     end
@@ -149,7 +122,7 @@ end
 
 % check if fixation was held in time
 if ~ontarget
-    toggleobject(all_obj, 'status','off', 'eventmarker',22);
+    toggleobject(all_go, 'status','off', 'eventmarker',22);
     trialerror(4); % no fixation
     
     set_bgcolor([1 0 0]); % red error screen
@@ -158,29 +131,12 @@ if ~ontarget
     return
 end
 
-% turn off unchosen stim on free trials
-if trialtype == 2
-    if choice == 2
-        toggleobject(target, 'status','off', 'eventmarker',21);
-    else
-        toggleobject(nontarget, 'status','off', 'eventmarker',21);
-    end
-end
 
 % REWARD EPOCH
-if stims(choice) == rotated
-    trialerror(0); % correct
-    
-    amnt = 6 - 5*rt/(choice_interval+saccade_interval);
-    goodmonkey(reward_interval, 'triggerval',amnt, 'eventmarker',40);
-    eventmarker(41);
-    
-    toggleobject(all_obj, 'status','off', 'eventmarker',22);
-else
-    trialerror(6); % incorrect
-    
-    toggleobject(all_obj, 'status','off', 'eventmarker',22);
-    set_bgcolor([1 0 0]); % red error screen
-    idle(timeout); % timeout
-    set_bgcolor([]);
-end
+trialerror(0); % correct
+
+amnt = 3.1; % amount of reward (V)
+goodmonkey(reward_interval, 'triggerval',amnt, 'eventmarker',40);
+eventmarker(41);
+
+toggleobject(all_go, 'status','off', 'eventmarker',22);
