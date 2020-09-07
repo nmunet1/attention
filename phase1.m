@@ -19,16 +19,18 @@ all_obj = [fix_point distractor];
 
 % define time intervals (ms)
 fix_wait = 7500;
-fix_hold = 750;
-fixed_delay = 500; % goal: 750ms
-mean_rand_delay = 100; % goal: 500ms
+fix_hold = 500;
+delay_min = 250;
+delay_max = 350;
+stim_flash = 0;
 reward_interval = 1000;
-timeout = 500;
+timeout = 50;
 
 % define fixation windows (deg)
 fix_radius = 2;
 
-editable('fix_radius', 'fixed_delay', 'mean_rand_delay', 'timeout');
+editable('fix_radius', 'fix_hold', 'delay_min', 'delay_max', 'stim_flash', 'timeout');
+if stim_flash < 0, stim_flash = 0; end
 
 % ----- TASK SEQUENCE -----
 
@@ -60,15 +62,28 @@ end
 
 
 % STIM PRESENTATION EPOCH
+delay_to_change = rand*(delay_max-delay_min) + delay_min;
 toggleobject(distractor, 'eventmarker',20);
-delay_to_change = fixed_delay + exprnd(mean_rand_delay);
+if stim_flash > 0
+    ontarget = eyejoytrack('holdfix', fix_point, fix_radius, stim_flash);
+    if ~ontarget % central fixation not maintained during stim presentation
+        toggleobject(all_obj, 'status','off', 'eventmarker',22);
+        trialerror(5); % early response
+        
+        set_bgcolor([0.75 0.75 0.75]); % grey error screen
+        idle(timeout);
+        set_bgcolor([]);
+        return
+    end
+    toggleobject(distractor, 'eventmarker',20);
+end
 
-ontarget = eyejoytrack('holdfix', fix_point, fix_radius, delay_to_change);
+ontarget = eyejoytrack('holdfix', fix_point, fix_radius, delay_to_change-stim_flash);
 if ~ontarget % central fixation not maintained during stim presentation
     toggleobject(all_obj, 'status','off', 'eventmarker',22);
     trialerror(5); % early response
     
-    set_bgcolor([1 1 1]); % white error screen
+    set_bgcolor([0.75 0.75 0.75]); % grey error screen
     idle(timeout); % timeout
     set_bgcolor([]);
     return
@@ -78,7 +93,7 @@ end
 % REWARD EPOCH
 trialerror(0); % correct
 
-amnt = 3; % amount of reward
+amnt = 3.5; % amount of reward
 goodmonkey(reward_interval, 'triggerval',amnt, 'eventmarker',40);
 eventmarker(41);
 
