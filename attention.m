@@ -29,8 +29,8 @@ reward_interval = 1000;
 timeout = 500;
 
 % define fixation windows (deg)
-fix_radius = 2;
-choice_radius = 2;
+fix_radius = 2.5;
+choice_radius = 2.5;
 
 % set default stimulus info
 contrast = 1; % stimulus contrast
@@ -38,7 +38,8 @@ frequency = 0.85; % stimulus frequency
 rotation_size = 15; % deg
 target_bias = 0.75; % probability of rotation at target
 
-editable('fix_radius', 'choice_radius', 'contrast', 'frequency', ...
+editable('fix_radius', 'choice_radius', 'delay_min', 'delay_max', ...
+    'choice_interval', 'saccade_interval', 'timeout', 'contrast', 'frequency', ...
     'rotation_size', 'target_bias');
 
 % get trial info

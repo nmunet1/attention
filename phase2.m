@@ -31,9 +31,11 @@ reward_interval = 1000;
 timeout = 50;
 
 % define fixation windows (deg)
-fix_radius = 2;
+fix_radius = 2.5;
+choice_radius = 2.5;
 
-editable('fix_radius', 'fix_hold', 'delay_min', 'delay_max', 'timeout');
+editable('fix_radius', 'choice_radius', 'delay_min', 'delay_max', ...
+    'choice_interval', 'saccade_interval', 'timeout');
 
 % ----- TASK SEQUENCE -----
 
@@ -68,7 +70,7 @@ end
 delay_to_change = rand*(delay_max-delay_min) + delay_min;
 toggleobject(distractor, 'eventmarker',20);
 
-ontarget = eyejoytrack('holdfix', fix_point, fix_radius, delay_to_change-stim_flash);
+ontarget = eyejoytrack('holdfix', fix_point, fix_radius, delay_to_change);
 if ~ontarget % central fixation not maintained during stim presentation
     toggleobject(all_nogo, 'status','off', 'eventmarker',22);
     trialerror(5); % early response
@@ -95,9 +97,9 @@ if ~breakfix
     toggleobject(all_go, 'status','off', 'eventmarker',22);
     trialerror(1); % no response (i.e. miss)
     
-    set_bgcolor([1 0 0]); % red error screen
-    idle(timeout); % timeout
-    set_bgcolor([]);
+%     set_bgcolor([0.75 0 0]); % red error screen
+%     idle(timeout); % timeout
+%     set_bgcolor([]);
     return
 end
 toggleobject(fix_point, 'eventmarker',11) % turn off fix point
@@ -125,7 +127,7 @@ if ~ontarget
     toggleobject(all_go, 'status','off', 'eventmarker',22);
     trialerror(4); % no fixation
     
-    set_bgcolor([1 0 0]); % red error screen
+    set_bgcolor([0.75 0 0]); % red error screen
     idle(timeout); % timeout
     set_bgcolor([]);
     return
