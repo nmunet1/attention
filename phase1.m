@@ -54,7 +54,7 @@ if ~ontarget % central fixation not held
     toggleobject(fix_point, 'status','off', 'eventmarker',11);
     trialerror(4); % no fixation
     
-    set_bgcolor([1 1 1]); % white error screen
+    set_bgcolor([0.75 0.75 0.75]); % grey error screen
     idle(timeout); % timeout
     set_bgcolor([]);
     return
