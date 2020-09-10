@@ -35,7 +35,7 @@ fix_radius = 2.5;
 choice_radius = 2.5;
 
 editable('fix_radius', 'choice_radius', 'delay_min', 'delay_max', ...
-    'choice_interval', 'saccade_interval', 'timeout');
+    'choice_interval', 'saccade_interval', 'choice_hold', 'timeout');
 
 % ----- TASK SEQUENCE -----
 
@@ -51,11 +51,13 @@ while trialtime < wait_start + fix_wait
     eventmarker(12);
     
     if ontarget
-        if eyejoytrack('holdfix', fix_point, fix_radius, fix_hold), break; end
+        if eyejoytrack('holdfix', fix_point, fix_radius, fix_hold), break; 
+        else, ontarget = 0; end
     end
 end
 
 if ~ontarget % central fixation not held
+    eventmarker(31);
     toggleobject(fix_point, 'status','off', 'eventmarker',11);
     trialerror(4); % no fixation
     
@@ -84,8 +86,7 @@ end
 
 % STIM CHANGE
 toggleobject(distractor, 'status','off')
-toggleobject(target, 'status','on')
-eventmarker(30);
+toggleobject(target, 'status','on', 'eventmarker',30)
 response_start = trialtime;
 
 
@@ -117,6 +118,8 @@ while trialtime < waitstart + saccade_interval
     % hold fixation on choice to confirm selection
     if choice > 0
         ontarget = eyejoytrack('holdfix', target, fix_radius, choice_hold);
+        if ontarget, eventmarker(32); break;
+        else, eventmarker(31); end
     else
         ontarget = 0;
     end
@@ -125,7 +128,7 @@ end
 % check if fixation was held in time
 if ~ontarget
     toggleobject(all_go, 'status','off', 'eventmarker',22);
-    trialerror(4); % no fixation
+    trialerror(3); % break fixation
     
     set_bgcolor([0.75 0 0]); % red error screen
     idle(timeout); % timeout
@@ -137,7 +140,7 @@ end
 % REWARD EPOCH
 trialerror(0); % correct
 
-amnt = 3.1; % amount of reward (V)
+amnt = 3; % amount of reward (V)
 goodmonkey(reward_interval, 'triggerval',amnt, 'eventmarker',40);
 eventmarker(41);
 
